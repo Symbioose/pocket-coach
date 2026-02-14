@@ -16,8 +16,15 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mood: mood })
       });
-      
-      const audioBlob = await response.blob();
+
+      const data = await response.json();
+      setAdvice(data.response ?? "");
+      const response_audio = await fetch('http://localhost:8000/coach/audio',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text : data.response })
+      })
+      const audioBlob = await response_audio.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl); 
       audio.play()
@@ -46,7 +53,7 @@ function App() {
       
       {advice && (
         <div className="response-box">
-          <p>“”</p>
+          <p>“{advice}”</p>
         </div>
       )}
     </div>
