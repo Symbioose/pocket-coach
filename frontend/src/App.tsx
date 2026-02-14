@@ -17,8 +17,10 @@ function App() {
         body: JSON.stringify({ mood: mood })
       });
       
-      const data = await response.json();
-      setAdvice(data.response);
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl); 
+      audio.play()
     } catch (error) {
       console.error("Erreur:", error);
       setAdvice("Erreur de connexion au coach...");
@@ -44,7 +46,7 @@ function App() {
       
       {advice && (
         <div className="response-box">
-          <p>“{advice}”</p>
+          <p>“”</p>
         </div>
       )}
     </div>

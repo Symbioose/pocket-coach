@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from mistralai import Mistral
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from elevenlabs.client import ElevenLabs
 
 app = FastAPI()
 
@@ -23,6 +25,10 @@ app.add_middleware(
 mistral_api_key = os.environ.get("MISTRAL_API_KEY", None)
 client = Mistral(mistral_api_key)
 
+elevenlabs = ElevenLabs(
+    api_key=os.getenv("ELEVENLABS_API_KEY"),
+)
+
 
 class MoodRequest(BaseModel):
     mood: str
@@ -42,4 +48,13 @@ def get_motivation(request: MoodRequest):
         return {"response": "Merci de renseigner une key api mistral"}
 
     chat_response = client.chat.complete(model="mistral-tiny", messages=messages)
-    return {"response": chat_response.choices[0].message.content}
+    audio_stream = elevenlabs.text_to_speech.convert(
+        text=chat_response.choices[0].message.content,
+        voice_id="JBFqnCBsd6RMkjVDRZzb",
+        model_id="eleven_multilingual_v2",
+        output_format="mp3_44100_128",
+    )
+    return StreamingResponse(
+        audio_stream,
+        media_type="audio/mpeg",
+    )
