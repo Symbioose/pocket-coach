@@ -4,3 +4,4 @@ mistralai
 python-dotenv
 elevenlabs
 groq
+python-multipart

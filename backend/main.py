@@ -1,10 +1,11 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from mistralai import Mistral
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from elevenlabs.client import ElevenLabs
+from stt import transcribe_audio_bytes
 
 app = FastAPI()
 
@@ -67,3 +68,10 @@ def get_motivation_audio(request: TextToAudio):
         audio_stream,
         media_type="audio/mpeg",
     )
+
+
+@app.post("/stt")
+async def speech_to_text(file: UploadFile = File(...)):
+    audio_bytes = await file.read()
+    text = transcribe_audio_bytes(audio_bytes, file.filename)
+    return {"response": text}
