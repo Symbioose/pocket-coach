@@ -12,6 +12,7 @@ Create a `.env` file at the repo root (same level as `docker-compose.yml`) and a
 ```env
 MISTRAL_API_KEY=your_mistral_api_key
 ELEVENLABS_API_KEY=your_elevenlabs_api_key
+GROQ_API_KEY=your_groq_api_key
 ```
 
 ### 3. Build and start the project
